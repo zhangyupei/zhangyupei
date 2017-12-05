@@ -1,0 +1,103 @@
+<?php
+
+use DfaFilter\SensitiveHelper;
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+
+
+	</style>
+</head>
+<body>
+	
+	<center>
+		当前用户：<?php
+		$session = Yii::$app->session;
+        $session->open();
+        $a = $session->get('user');
+        
+        ?>
+        <font class="u_name"><?php print_r($a); ?></font>
+            <table border="">
+			 <tr class="biao">
+               <td>id</td><td>评价内容</td><td>用户</td><td>操作</td>
+            </tr>
+           <?php foreach($show as $v) { ?>
+            <tr>
+               <td><?= print_r($v['id']); ?></td><td><input type="text" class="kk" style="display:none" value=<?= ($v['content']); ?>>
+                <span class="nr_dian"><?= print_r($v['content']); ?></span></td><td> <?= print_r($v['u_name']); ?></td><td><a href="javascript:void(0);" class="del" where=<?= $v['id']; ?>>删除</a></td>
+            </tr>
+           <?php } ?>
+
+		</table>
+		<input type="text" class="zhi"><input type="button" value="发表评论" class="dian">
+	</center>
+</body>
+<script src="http://localhost/week9/basic/views/site/jquery.1.12.js"></script>
+<script>
+$(".dian").on("click",function(){
+	// alert(0)
+	var content = $(".zhi").val();
+	var u_name = $(".u_name").html();
+	$.ajax({
+		type:"post",
+		url:"http://localhost/week9/basic/web/index.php?r=site/tian",
+		data:{content:content,u_name:u_name},
+		success:function(r){
+				if(r==1)
+				{
+                   // alert("评论成功");
+                   location.href="http://localhost/week9/basic/web/index.php?r=site/show";
+				}else{
+					alert("评论失败");
+				}
+				
+		}
+	})
+	
+	
+})
+
+$(document).on("click",".del",function(){
+	var id = $(this).attr('where');
+	$.ajax({
+		type:"post",
+		url:"http://localhost/week9/basic/web/index.php?r=site/del",
+		data:{id:id},
+		success:function(r){
+			if(r==1){
+				location.href = "http://localhost/week9/basic/web/index.php?r=site/show";
+			}else{
+				alert("删除失败");
+			}
+		}
+	})
+})
+
+$(document).on("click",".nr_dian",function(){
+	var obj = $(this);
+	
+			obj.prev().show();
+			
+			obj.prev().focus();
+          	obj.hide();
+})
+
+$(document).on("blur",".kk",function(){
+	var obj = $(this);
+			var name = obj.val();
+			var id = obj.attr("where");
+			alert(id)
+})
+/**if(r==1)
+				{
+                 location.href = "http://localhost/week9/basic/web/index.php?r=site/show";
+				}else{
+					alert("评论失败");
+				}*/
+</script>
+</html>
